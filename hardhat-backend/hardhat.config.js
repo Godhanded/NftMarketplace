@@ -49,7 +49,7 @@ module.exports = {
             //     mnemonic: MNEMONIC,
             //   },
             saveDeployments: true,
-            blockConfirmations: 1,
+            blockConfirmations: 3,
             chainId: 5,
         },
         mainnet: {

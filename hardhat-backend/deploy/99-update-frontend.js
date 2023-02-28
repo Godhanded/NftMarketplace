@@ -1,25 +1,30 @@
 const { network, ethers } = require("hardhat")
 const fs = require("fs")
 
-
-const frontendContractFile ="../../nextjs-frontend/constants/contractAddresses.json";
-const frontendContractAbi="../../nextjs-frontend/constants/"
+const frontendContractFile =
+    "/workspace/NftMarketplace/nextjs-frontend/constants/contractAddresses.json"
+const frontendContractAbi = "/workspace/NftMarketplace/nextjs-frontend/constants/"
 
 module.exports = async () => {
     if (process.env.UPDATE_FRONTEND) {
         console.log("updating frontend ......")
         await updateContractAddresses()
-      await updateAbi()
+        await updateAbi()
     }
 }
 
-async function updateAbi(){
-  const nftMarketplace = await ethers.getContract("NftMarketplace")
-  fs.writeFileSync(`${frontendContractAbi}NftMarketplace.json`,nftMarketplace.interface.format(ethers.utils.FormatTypes.json))
+async function updateAbi() {
+    const nftMarketplace = await ethers.getContract("NftMarketplace")
+    fs.writeFileSync(
+        `${frontendContractAbi}NftMarketplace.json`,
+        nftMarketplace.interface.format(ethers.utils.FormatTypes.json)
+    )
 
-  const mockNft = await ethers.getContract("MockNft")
-    fs.writeFileSync(`${frontendContractAbi}MockNft.json`,mockNft.interface.format(ethers.utils.FormatTypes.json))
-  
+    const mockNft = await ethers.getContract("MockNft")
+    fs.writeFileSync(
+        `${frontendContractAbi}MockNft.json`,
+        mockNft.interface.format(ethers.utils.FormatTypes.json)
+    )
 }
 
 async function updateContractAddresses() {
