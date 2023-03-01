@@ -28,17 +28,18 @@ export default function NFTBox({price,nftAddress,seller,tokenId}){
             setTokenData({name:tokenUriResopnse.name,description:tokenUriResopnse.description})
         }
     }
-console.log("boxed..")
+    console.log("boxed..")
     // useEffect(()=>{
     //     updateUI()
     // },[])
 
     return (
-        <div>
+        
             <div>
-                {imageURI? <Card tokenId={tokenId} title={tokendata.name} description={tokendata.description} price={`${ethers.utils.formatUnits(price,"ether")} ETH`}>
+                {!imageURI? <Card tokenId={tokenId} title={tokendata.name} description={tokendata.description} price={`${ethers.utils.formatUnits(price,"ether")} ETH`}>
                     <div className="italic text-sm">Owned by {seller}</div>
                     <Image
+                    className="mx-auto"
                     loader={()=>imageURI}
                     src={imageURI}
                     height="200"
@@ -46,6 +47,6 @@ console.log("boxed..")
                     />
                 </Card>: <div>loading...</div>}
             </div>
-        </div>
+        
     )
 }
