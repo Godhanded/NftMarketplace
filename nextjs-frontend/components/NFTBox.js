@@ -40,7 +40,7 @@ export default function NFTBox({price,nftAddress,seller,tokenId}){
         functionName:"buyItem",
         args:[nftAddress,tokenId],
         overrides:{
-            value:ethers.utils.parseEther(price)
+            value:ethers.utils.parseEther(`${price}`)
         },
         onSuccess(tx){dispatch({
         type:"info",
@@ -99,7 +99,7 @@ export default function NFTBox({price,nftAddress,seller,tokenId}){
                 <Card tokenId={tokenId} 
                 title={tokenData.name} 
                 description={tokenData.description}
-                price={`${ethers.utils.formatUnits(price,"ether")} ETH`} onClick={handleCardClick}>
+                price={`${ethers.utils.formatUnits(`${price}`,"ether")} ETH`} onClick={handleCardClick}>
                     <div className="italic text-sm">Owned by {fromatedSellerAddress}</div>
                     <Image
                     className="mx-auto"
