@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { useContractRead,useAccount } from "wagmi";
+import { useContractRead,useAccount,usePrepareContractWrite,useContractWrite,useWaitForTransaction } from "wagmi";
 import nftMarketplaceAbi from "../constants/NftMarketplace.json"
+import nftMarketAddress from "../constants/contractAddresses.json"
 import nftAbi from "../constants/MockNft.json"
+import { useNotification } from "@web3uikit/core";
 import Card from "./Card"
 import UpdateListingModal from "./UpdateListingModal";
 import Image from "next/image"
@@ -21,14 +23,45 @@ const truncateStr=(fullStr,strLen)=>{
 export default function NFTBox({price,nftAddress,seller,tokenId}){
     const [imageURI,setImageURI]=useState("")
     const [tokenData,setTokenData] =useState({name:"",description:""})
-    const [showModal,setShowModal]=useState(true)
+    const [showModal,setShowModal]=useState(false)
+    const dispatch=useNotification()
     const getUri=useContractRead({
         abi:nftAbi,
         address:nftAddress,
         functionName:"tokenURI",
         args:[tokenId],
-        enabled:false
+        enabled:Boolean(tokenId)
     })
+
+    const {config}=usePrepareContractWrite()
+    const {write,data}=useContractWrite({
+        address:nftMarketAddress[5]["NftMarketplace"],
+        abi:nftMarketplaceAbi,
+        functionName:"buyItem",
+        args:[nftAddress,tokenId],
+        overrides:{
+            value:ethers.utils.parseEther(price)
+        },
+        onSuccess(tx){dispatch({
+        type:"info",
+        message:"Tx Confirming",
+        title:"Please Wait for Tx to Confirm",
+        position:"topR",
+        
+    })}})
+    const {isLoading,isSuccess,}=useWaitForTransaction({
+        hash:data?.hash
+    })
+    const handleBuySuccess=()=>{
+        dispatch({
+            type:"success",
+            message:"Item Bought",
+            title:"item bought",
+            position:"topR"
+        })
+    }
+
+    isSuccess && handleBuySuccess()
 
     const {isConnected,address}=useAccount()
     async function updateUI(){
@@ -54,7 +87,8 @@ export default function NFTBox({price,nftAddress,seller,tokenId}){
     const fromatedSellerAddress= isOwnedByUser? "you": truncateStr(seller || "",15)
 
     const handleCardClick=(event)=>{
-        isOwnedByUser? setShowModal(true):"buyy"
+        isOwnedByUser? setShowModal(true): write?.()
+  
     }
 
     return (

@@ -1,9 +1,9 @@
 
-export default function Card({ children,tokenId,title,description,price }){
+export default function Card({ children,tokenId,title,description,price,onClick }){
 
 return (
         
-        <div className="max-w-xs mx-auto ">
+        <div className="max-w-xs mx-auto " onClick={onClick}>
             
             <div className="relative bg-indigo-600 hover:bg-indigo-500 bg-opacity-25 hover:bg-opacity-25 shadow-lg rounded-lg shadow-lg p-5 overflow-hidden">
             {children}

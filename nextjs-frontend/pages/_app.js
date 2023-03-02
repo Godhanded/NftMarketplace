@@ -4,6 +4,7 @@ import Head from "next/head"
 
 import { getDefaultWallets, RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit"
 import { configureChains, createClient, WagmiConfig } from "wagmi"
+import { NotificationProvider } from "@web3uikit/core"
 import { goerli } from "wagmi/chains"
 import { publicProvider } from "wagmi/providers/public"
 import Header from "../components/Header"
@@ -30,8 +31,10 @@ export default function App({ Component, pageProps }) {
             </Head>
             <WagmiConfig client={wagmiClient}>
                 <RainbowKitProvider chains={chains} theme={darkTheme()}>
-                    <Header />
-                    <Component {...pageProps} />
+                    <NotificationProvider>
+                        <Header />
+                        <Component {...pageProps} />
+                    </NotificationProvider>
                 </RainbowKitProvider>
             </WagmiConfig>
         </>
