@@ -11,6 +11,9 @@
     },
     "dependencies": {
         "@rainbow-me/rainbowkit": "^0.11.0",
+        "@web3uikit/core": "^0.2.47",
+        "@web3uikit/icons": "^0.2.46",
+        "@web3uikit/web3": "^0.2.2",
         "ethers": "5.7.2",
         "next": "13.2.1",
         "prettier": "^2.8.4",

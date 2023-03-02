@@ -3,6 +3,7 @@ import { useContractRead,useAccount } from "wagmi";
 import nftMarketplaceAbi from "../constants/NftMarketplace.json"
 import nftAbi from "../constants/MockNft.json"
 import Card from "./Card"
+import UpdateListingModal from "./UpdateListingModal";
 import Image from "next/image"
 import { ethers } from "ethers";
 
@@ -20,6 +21,7 @@ const truncateStr=(fullStr,strLen)=>{
 export default function NFTBox({price,nftAddress,seller,tokenId}){
     const [imageURI,setImageURI]=useState("")
     const [tokenData,setTokenData] =useState({name:"",description:""})
+    const [showModal,setShowModal]=useState(true)
     const getUri=useContractRead({
         abi:nftAbi,
         address:nftAddress,
@@ -46,14 +48,24 @@ export default function NFTBox({price,nftAddress,seller,tokenId}){
         updateUI()
     },[isConnected])
 
+        
 
     const isOwnedByUser= seller===address ||seller==undefined
     const fromatedSellerAddress= isOwnedByUser? "you": truncateStr(seller || "",15)
 
+    const handleCardClick=(event)=>{
+        isOwnedByUser? setShowModal(true):"buyy"
+    }
+
     return (
         
             <div>
-                {!imageURI? <Card tokenId={tokenId} title={tokenData.name} description={tokenData.description} price={`${ethers.utils.formatUnits(price,"ether")} ETH`}>
+                {!imageURI?<div> <UpdateListingModal isVisible={showModal} nftAddress={nftAddress}
+                tokenId={tokenId} onClose={()=>setShowModal(false)}/>
+                <Card tokenId={tokenId} 
+                title={tokenData.name} 
+                description={tokenData.description}
+                price={`${ethers.utils.formatUnits(price,"ether")} ETH`} onClick={handleCardClick}>
                     <div className="italic text-sm">Owned by {fromatedSellerAddress}</div>
                     <Image
                     className="mx-auto"
@@ -63,7 +75,7 @@ export default function NFTBox({price,nftAddress,seller,tokenId}){
                     height="200"
                     width="200"
                     />
-                </Card>: <div>loading...</div>}
+                </Card></div>: <div>loading...</div>}
             </div>
         
     )
