@@ -11,7 +11,7 @@ export default function UpdateListingModal({nftAddress,tokenId,isVisible,onClose
      const [priceToUpdateListing,setPriceToUpdateListing]=useState(0)
     
      const {error: prepareError,config,isError:isPrepareError}=usePrepareContractWrite({
-        address:nftMarketAddress[5]["NftMarketplace"],
+        address:nftMarketAddress[5]["NftMarketplace"][0],
         abi:nftMarketplaceAbi,
         functionName:"updateListing",
         args:[nftAddress,tokenId,ethers.utils.parseEther(`${priceToUpdateListing}` || "0")],

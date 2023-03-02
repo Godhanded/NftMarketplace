@@ -35,7 +35,8 @@ export default function NFTBox({price,nftAddress,seller,tokenId}){
 
     const {config}=usePrepareContractWrite()
     const {write,data}=useContractWrite({
-        address:nftMarketAddress[5]["NftMarketplace"],
+        mode: 'recklesslyUnprepared',
+        address:nftMarketAddress[5]["NftMarketplace"][0],
         abi:nftMarketplaceAbi,
         functionName:"buyItem",
         args:[nftAddress,tokenId],
