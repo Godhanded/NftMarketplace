@@ -2,47 +2,54 @@ import { Form, useNotification } from "@web3uikit/core"
 import nftMarketplaceAbi from "../constants/NftMarketplace.json"
 import nftMarketAddress from "../constants/contractAddresses.json"
 import nftAbi from "../constants/MockNft.json"
-import { useContractWrite, usePrepareContractWrite } from "wagmi"
+import { useContractWrite, useWaitForTransaction } from "wagmi"
+import { useState,useEffect } from "react"
 import { ethers } from "ethers"
 
 export default function Home() {
     const dispatch = useNotification()
-    function handleApproveSuccess(nftAddress, tokenId, price) {
-        const { write } = useContractWrite({
-            mode: "recklesslyUnprepared",
-            abi: nftMarketplaceAbi,
-            address: nftMarketAddress[5]["NftMarketplace"][0],
-            functionName: "listItem",
-            args: [nftAddress, tokenId, price],
+    const [nftArgs,setNftArgs]=useState({nftAddress:"",tokenId:"",price:""})
+    const { write:listWrite } = useContractWrite({
+        mode: "recklesslyUnprepared",
+        abi: nftMarketplaceAbi,
+        address: nftMarketAddress[5]["NftMarketplace"][0],
+        functionName: "listItem",
+        args: [nftArgs.nftAddress, nftArgs.tokenId, nftArgs.price],
 
-            onSuccess(tx) {
-                handleListSuccess()
-            },
-        })
-        write?.()
+        onSuccess(tx) {
+            handleListSuccess()
+        },
+    })
+    function handleApproveSuccess() {
+        
+        listWrite?.()
     }
 
-    async function approveAndList(data) {
+    const { write,data } = useContractWrite({
+        mode: "recklesslyUnprepared",
+        abi: nftAbi,
+        address:nftArgs.nftAddress,
+        functionName: "approve",
+        args: [nftMarketAddress[5]["NftMarketplace"][0], nftArgs.tokenId],
+        
+    })
+    const {isSuccess,isLoading}=useWaitForTransaction({
+        hash:data?.hash
+    })
+    function approveAndList(data) {
         const nftAddress = data.data[0].inputResult
+        
         const tokenId = data.data[1].inputResult
         const price = ethers.utils.parseEther(`${data.data[2].inputResult}`).toString()
-
-        const approveOptions = {
-            abi: nftAbi,
-            address: nftAddress,
-            functionName: "approve",
-            args: [nftMarketAddress[5]["NftMarketplace"][0], tokenId],
-        }
-        const { write } = useContractWrite({
-            mode: "recklesslyUnprepared",
-            ...approveOptions,
-            onSuccess(tx) {
-                handleApproveSuccess(nftAddress, tokenId, price)
-            },
-        })
-
+        setNftArgs({nftAddress:nftAddress,tokenId:tokenId,price:price})        
+    }
+useEffect(()=>{
+    if(nftArgs.nftAddress && !isSuccess && !isLoading) {
         write?.()
     }
+    if(isSuccess) handleApproveSuccess()
+    
+},[nftArgs,isSuccess])
 
     function handleListSuccess() {
         dispatch({
@@ -54,6 +61,7 @@ export default function Home() {
     }
     return (
         <div>
+            
             <Form
                 onSubmit={approveAndList}
                 data={[

@@ -1,7 +1,7 @@
 import { Modal, Input, useNotification } from "@web3uikit/core"
 import { CheckSquare, Cloud } from "@web3uikit/icons"
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import nftMarketplaceAbi from "../constants/NftMarketplace.json"
 import nftMarketAddress from "../constants/contractAddresses.json"
 import { ethers } from "ethers"
@@ -19,14 +19,14 @@ export default function UpdateListingModal({ nftAddress, tokenId, isVisible, onC
         functionName: "updateListing",
         args: [nftAddress, tokenId, ethers.utils.parseEther(`${priceToUpdateListing}` || "0")],
     })
-    console.log(prepareError)
+
     const { write, data, error, isError } = useContractWrite({
         ...config,
         onSuccess(tx) {
             dispatch({
                 type: "info",
-                message: "Tx Confirming",
-                title: "Please Wait for Tx to Confirm",
+                message: "Please Wait for Tx to Confirm,You will be notified",
+                title: "Tx Confirming",
                 position: "topR",
             })
         },
@@ -42,11 +42,16 @@ export default function UpdateListingModal({ nftAddress, tokenId, isVisible, onC
             title: "Listing Updated - Please refresh",
             position: "topR",
             icon: CheckSquare,
+            
         })
         onClose && onClose()
         setPriceToUpdateListing("0")
     }
-
+    useEffect(()=>{
+        if (isSuccess) handleUpdateSuccessful()
+        
+    },[isSuccess])
+    
     return (
         <Modal
             isVisible={isVisible}
@@ -63,7 +68,7 @@ export default function UpdateListingModal({ nftAddress, tokenId, isVisible, onC
                     setPriceToUpdateListing(event.target.value)
                 }}
             />
-            {isSuccess && handleUpdateSuccessful()}
+            
             {(isPrepareError || isError) && (
                 <span className="italic text-red-400">
                     Error {(error || prepareError)?.message}

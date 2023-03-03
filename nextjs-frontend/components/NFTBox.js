@@ -23,7 +23,7 @@ const truncateStr = (fullStr, strLen) => {
     const frontChars = Math.ceil(charsToShow / 2)
     const backChars = Math.floor(charsToShow / 2)
     return (
-        fullStr.subString(0, frontChars) + seperator + fullStr.subString(fullStr.length - backChars)
+        fullStr.substring(0, frontChars) + seperator + fullStr.substring(fullStr.length - backChars)
     )
 }
 
@@ -40,7 +40,6 @@ export default function NFTBox({ price, nftAddress, seller, tokenId }) {
         enabled: Boolean(tokenId),
     })
 
-    const { config } = usePrepareContractWrite()
     const { write, data } = useContractWrite({
         mode: "recklesslyUnprepared",
         address: nftMarketAddress[5]["NftMarketplace"][0],
@@ -58,6 +57,14 @@ export default function NFTBox({ price, nftAddress, seller, tokenId }) {
                 position: "topR",
             })
         },
+        onError(data){
+            dispatch({
+                type: "error",
+                message: data.message.substring(0,100),
+                title: data.name,
+                position: "topR",
+            })
+        }
     })
     const { isLoading, isSuccess } = useWaitForTransaction({
         hash: data?.hash,
@@ -74,6 +81,7 @@ export default function NFTBox({ price, nftAddress, seller, tokenId }) {
     isSuccess && handleBuySuccess()
 
     const { isConnected, address } = useAccount()
+ 
     async function updateUI() {
         const tokenURI = getUri?.data
         if (tokenURI) {
@@ -86,12 +94,12 @@ export default function NFTBox({ price, nftAddress, seller, tokenId }) {
             setTokenData({ name: tokenUriResopnse.name, description: tokenUriResopnse.description })
         }
     }
-    console.log("boxed..")
+  
     useEffect(() => {
         updateUI()
     }, [isConnected])
 
-    const isOwnedByUser = seller === address || seller == undefined
+    const isOwnedByUser = seller == address.toLocaleLowerCase() || seller == undefined
     const fromatedSellerAddress = isOwnedByUser ? "you" : truncateStr(seller || "", 15)
 
     const handleCardClick = (event) => {
@@ -100,9 +108,8 @@ export default function NFTBox({ price, nftAddress, seller, tokenId }) {
 
     return (
         <div>
-            {!imageURI ? (
+            {imageURI ? (
                 <div>
-                    {" "}
                     <UpdateListingModal
                         isVisible={showModal}
                         nftAddress={nftAddress}

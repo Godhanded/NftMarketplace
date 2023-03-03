@@ -8,7 +8,12 @@ import { NotificationProvider } from "@web3uikit/core"
 import { goerli } from "wagmi/chains"
 import { publicProvider } from "wagmi/providers/public"
 import Header from "../components/Header"
+import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 
+const client = new ApolloClient({
+    cache: new InMemoryCache(),
+    uri: "https://api.studio.thegraph.com/query/43179/nftmarketplace/v0.0.2",
+})
 const { chains, provider } = configureChains([goerli], [publicProvider()])
 const { connectors } = getDefaultWallets({
     appName: "NFT Marketplace",
@@ -31,10 +36,12 @@ export default function App({ Component, pageProps }) {
             </Head>
             <WagmiConfig client={wagmiClient}>
                 <RainbowKitProvider chains={chains} theme={darkTheme()}>
-                    <NotificationProvider>
-                        <Header />
-                        <Component {...pageProps} />
-                    </NotificationProvider>
+                    <ApolloProvider client={client}>
+                        <NotificationProvider>
+                            <Header />
+                            <Component {...pageProps} />
+                        </NotificationProvider>
+                    </ApolloProvider>
                 </RainbowKitProvider>
             </WagmiConfig>
         </>
