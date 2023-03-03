@@ -2,11 +2,17 @@ import NFTBox from "@/components/NFTBox"
 import { useQuery } from "@apollo/client"
 import GET_ACTIVE_ITEMS from "@/constants/subGraphQueries"
 import { useAccount } from "wagmi"
+import { useState,useEffect } from "react"
 
 export default function Home() {
     const { isConnected } = useAccount()
     const { loading, error, data:listedItems } = useQuery(GET_ACTIVE_ITEMS)
-    return (
+    console.log(listedItems)
+    const [domLoaded, setDomLoaded] = useState(false);
+    useEffect(() => {
+        setDomLoaded(true);
+      }, []);
+    return (domLoaded && 
         <div className="container mx-auto">
             <h1 className="py-4 px-4 font-bold text-2xl">Recently Listed</h1>
             {isConnected ? (
