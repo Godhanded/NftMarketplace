@@ -2,6 +2,7 @@ import NFTBox from "@/components/NFTBox"
 import { useQuery } from "@apollo/client"
 import GET_ACTIVE_ITEMS from "@/constants/subGraphQueries"
 import { useAccount } from "wagmi"
+import { ethers } from "ethers"
 import { useState,useEffect } from "react"
 
 export default function Home() {
@@ -25,7 +26,7 @@ export default function Home() {
                             const { price, nftAddress, tokenId, seller } = nft
                             return (
                                 <NFTBox
-                                    price={price}
+                                    price={ethers.utils.formatEther(price)}
                                     tokenId={tokenId}
                                     nftAddress={nftAddress}
                                     seller={seller}

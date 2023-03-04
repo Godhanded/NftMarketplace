@@ -56,6 +56,7 @@ export default function NFTBox({ price, nftAddress, seller, tokenId }) {
                 title: "Please Wait for Tx to Confirm",
                 position: "topR",
             })
+                    
         },
         onError(data){
             dispatch({
@@ -120,7 +121,7 @@ export default function NFTBox({ price, nftAddress, seller, tokenId }) {
                         tokenId={tokenId}
                         title={tokenData.name}
                         description={tokenData.description}
-                        price={`${ethers.utils.formatUnits(`${price}`, "ether")} ETH`}
+                        price={`${price} ETH`}
                         onClick={handleCardClick}
                     >
                         <div className="italic text-sm">Owned by {fromatedSellerAddress}</div>
