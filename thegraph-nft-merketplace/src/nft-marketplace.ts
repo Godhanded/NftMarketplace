@@ -9,7 +9,7 @@ import { ItemBought, ItemCancelled, ItemListed,ActiveItem } from "../generated/s
 export function handleItemBought(event: ItemBoughtEvent): void {
   let itemBought=ItemBought.load(getIdFromEventParams(event.params.tokenId,event.params.nftAddress))
   let activeItem= ActiveItem.load(getIdFromEventParams(event.params.tokenId,event.params.nftAddress))
-  if(!itemBought){
+  if(itemBought==null){
   itemBought = new ItemBought(
     getIdFromEventParams(event.params.tokenId,event.params.nftAddress)
   )
@@ -29,7 +29,7 @@ export function handleItemBought(event: ItemBoughtEvent): void {
 export function handleItemCancelled(event: ItemCancelledEvent): void {
   let itemCancelled= ItemCancelled.load(getIdFromEventParams(event.params.tokenId,event.params.nftAddress))
   let activeItem=ActiveItem.load(getIdFromEventParams(event.params.tokenId,event.params.nftAddress))
-  if(!itemCancelled){
+  if(itemCancelled==null){
   itemCancelled = new ItemCancelled(
     getIdFromEventParams(event.params.tokenId,event.params.nftAddress)
   )}
@@ -47,11 +47,11 @@ export function handleItemCancelled(event: ItemCancelledEvent): void {
 export function handleItemListed(event: ItemListedEvent): void {
   let itemListed= ItemListed.load(getIdFromEventParams(event.params.tokenId,event.params.mftAddress))
   let activeItem= ActiveItem.load(getIdFromEventParams(event.params.tokenId,event.params.mftAddress))
-  if(!itemListed){
+  if(itemListed==null){
   itemListed = new ItemListed(
     getIdFromEventParams(event.params.tokenId,event.params.mftAddress)
   )}
-  if(!activeItem){
+  if(activeItem==null){
     activeItem= new ActiveItem(
       getIdFromEventParams(event.params.tokenId,event.params.mftAddress)
     )

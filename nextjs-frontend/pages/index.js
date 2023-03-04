@@ -7,8 +7,9 @@ import { useState,useEffect } from "react"
 export default function Home() {
     const { isConnected } = useAccount()
     const { loading, error, data:listedItems } = useQuery(GET_ACTIVE_ITEMS)
-    console.log(listedItems)
+    
     const [domLoaded, setDomLoaded] = useState(false);
+    console.log(listedItems)
     useEffect(() => {
         setDomLoaded(true);
       }, []);
